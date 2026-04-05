@@ -83,7 +83,7 @@ Founder is a DevOps engineer — handles server provisioning, Nginx, PHP-FPM, Re
 | App server | EC2 (t3.small or t3.medium) | PHP-FPM + Nginx |
 | Database | RDS PostgreSQL or Aurora PostgreSQL Serverless | Separate managed, not on EC2 |
 | Cache + queues | ElastiCache Redis | Start here; migrate to SQS later if needed |
-| Email | SES (free tier: 62K/mo) | Or Resend — decide at build time |
+| Email | Resend (start) → SES (once production access approved) | Free both ways |
 | Landing page | Cloudflare Pages (free) | Static Astro |
 | Docs | Cloudflare Pages (free) | Astro Starlight |
 | Status page | Gatus on EC2 | Separate Docker container |
@@ -98,7 +98,7 @@ Founder is a DevOps engineer — handles server provisioning, Nginx, PHP-FPM, Re
 | App server | Hetzner CX22 (2 vCPU, 4GB) | ~€4 |
 | Database | **Neon** (serverless Postgres, free tier: 0.5GB) | $0 → $19 when scaling |
 | Cache + queues | Redis on VPS | $0 |
-| Email | Resend (free: 3K/mo) | $0 |
+| Email | Resend (start, free: 3K/mo) → SES when AWS ready | $0 |
 | Landing + Docs | Cloudflare Pages (free) | $0 |
 | Status page | Gatus on same VPS | $0 |
 | SSL | Let's Encrypt (certbot) | $0 |
