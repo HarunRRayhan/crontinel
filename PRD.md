@@ -1070,4 +1070,60 @@ Competitors to create: `cronitor`, `better-stack`, `oh-dear`, `forge-heartbeats`
 
 ---
 
-*End of PRD v1.0*
+---
+
+## 15. V2 Roadmap — MCP Integration
+
+### Vision
+
+Crontinel exposes an **MCP (Model Context Protocol) server** so AI coding assistants (Claude Code, Cursor, GitHub Copilot, etc.) can directly interact with Laravel cron jobs and queues from within their chat interface.
+
+**Example interaction:**
+> Developer in Claude Code: "Did my `send-invoices` job run last night?"
+> Claude Code → calls Crontinel MCP `get_cron_status` → returns result inline
+
+### MCP tools to expose
+
+| Tool | Description |
+|---|---|
+| `list_scheduled_jobs` | List all monitored cron commands and their schedules |
+| `get_cron_status` | Get last run status, exit code, duration for a command |
+| `get_queue_status` | Get depth, failed count, oldest job age per queue |
+| `get_horizon_status` | Get Horizon supervisor health snapshot |
+| `list_recent_alerts` | Get fired alerts in the last N hours |
+| `create_alert` | Create a new alert threshold for a monitor |
+| `acknowledge_alert` | Dismiss an active alert |
+
+### Implementation approach
+
+1. Crontinel SaaS exposes an **MCP-compatible HTTP endpoint** at `app.crontinel.com/mcp`
+2. Authenticated via existing `api_key` (same as REST API)
+3. Users add Crontinel as an MCP server in their AI assistant config:
+
+```json
+// Claude Code settings (mcp_servers)
+{
+  "crontinel": {
+    "command": "npx",
+    "args": ["-y", "@crontinel/mcp-server"],
+    "env": {
+      "CRONTINEL_API_KEY": "your-api-key",
+      "CRONTINEL_APP": "your-app-slug"
+    }
+  }
+}
+```
+
+4. Publish `@crontinel/mcp-server` as an npm package (thin wrapper over REST API)
+
+### Milestone 7 — MCP Server (V2, post-launch)
+**Done when:**
+- [ ] `@crontinel/mcp-server` npm package published
+- [ ] All 7 MCP tools implemented and tested
+- [ ] Claude Code integration documented + tested end-to-end
+- [ ] MCP setup guide added to `docs.crontinel.com`
+- [ ] Listed on MCP server directories (mcp.so, etc.)
+
+---
+
+*End of PRD v1.1*
