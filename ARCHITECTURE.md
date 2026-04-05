@@ -21,9 +21,22 @@
 | Domain | Purpose | Stack |
 |---|---|---|
 | `crontinel.com` | Marketing / landing page | Astro on CF Pages |
-| `app.crontinel.com` | Hosted SaaS dashboard | Laravel 12 on Hetzner |
+| `app.crontinel.com` | Hosted SaaS dashboard | Laravel 12 on Hetzner/AWS |
+| `staging.crontinel.com` | Staging environment | Same stack as app, separate server |
 | `docs.crontinel.com` | Documentation | Astro Starlight on CF Pages |
 | `status.crontinel.com` | Status page | Gatus on Hetzner VPS |
+
+---
+
+## Repositories
+
+| Repo | Visibility | Purpose |
+|---|---|---|
+| `github.com/HarunRRayhan/crontinel` | Public (MIT) | OSS Laravel package |
+| `github.com/HarunRRayhan/crontinel-app` | Private | SaaS app (Laravel 12) |
+| `github.com/HarunRRayhan/crontinel-landing` | Public (or Private TBD) | Astro landing page |
+
+OSS package repo is public from day one — it's the distribution engine. SaaS app is private. Landing page repo visibility TBD (no sensitive data in it).
 
 ---
 
@@ -174,6 +187,59 @@ This means the OSS package serves double duty: standalone self-hosted dashboard 
 
 ---
 
+## CI/CD
+
+| Component | Choice | Notes |
+|---|---|---|
+| Pipeline | GitHub Actions | Triggers on push to `main` and `staging` branches |
+| Deploy | AWS CodeDeploy | Preferred when on AWS; fallback: SSH + rsync on Hetzner |
+| Environments | `main` → production, `staging` → staging | PRs merge to `staging` first, then promote to `main` |
+| Tests | Pest runs on every PR | Must pass before merge |
+
+**Deploy flow:** Push to `staging` branch → GH Actions → run tests → CodeDeploy to `staging.crontinel.com`. Merge to `main` → GH Actions → run tests → CodeDeploy to `app.crontinel.com`.
+
+---
+
+## GDPR & Privacy
+
+Full GDPR compliance required at launch.
+
+| Requirement | Implementation |
+|---|---|
+| Cookie consent | Cookie consent banner (JS, opt-in for analytics cookies) |
+| Privacy Policy | `/legal/privacy` on landing page (required at launch) |
+| Terms of Service | `/legal/terms` on landing page (required at launch) |
+| Data export | User can export all their data (JSON) from `/profile` |
+| Data deletion | User can delete account + all data from `/profile` |
+| Right to be forgotten | Account deletion purges all PII within 30 days |
+| Data location | EU region preferred (Hetzner EU or AWS eu-central-1) |
+
+---
+
+## Analytics & Monitoring
+
+| Tool | Purpose |
+|---|---|
+| Google Analytics 4 | Landing page visitor analytics |
+| Gatus | Uptime monitoring for `app.crontinel.com`, API endpoints |
+| Laravel Horizon | Queue worker monitoring (dogfooding) |
+
+Analytics only on `crontinel.com` (landing). No tracking scripts on `app.crontinel.com` dashboard (privacy-friendly for paying users).
+
+---
+
+## Auth & Security
+
+| Feature | Choice |
+|---|---|
+| Auth | Laravel Breeze (email/password) + GitHub OAuth (Socialite) |
+| 2FA | Optional TOTP (not required at login) — user enables from profile |
+| 2FA implementation | Built-in or `pragmarx/google2fa-laravel` |
+| Session | Standard Laravel sessions (Redis-backed) |
+| API auth | Bearer token (api_key for package, Sanctum PAT for REST API) |
+
+---
+
 ## Decisions log
 
 | Decision | Choice | Date |
@@ -190,9 +256,17 @@ This means the OSS package serves double duty: standalone self-hosted dashboard 
 | OSS license | MIT | 2026-04-05 |
 | Billing | Laravel Cashier + Stripe | 2026-04-05 |
 | Teams model | Multi-user + multi-app per team | 2026-04-05 |
+| Repos | crontinel (public OSS) + crontinel-app (private SaaS) | 2026-04-05 |
+| CI/CD | GitHub Actions + AWS CodeDeploy | 2026-04-05 |
+| Staging | staging.crontinel.com (mirrors production stack) | 2026-04-05 |
+| GDPR | Full compliance — cookie consent, data export, deletion | 2026-04-05 |
+| Analytics | Google Analytics 4 on landing page only | 2026-04-05 |
+| 2FA | Optional TOTP, recommended not required | 2026-04-05 |
+| GitHub OAuth | Confirmed YES via Laravel Socialite | 2026-04-05 |
 
 ## Still open (non-blocking)
 
-- [x] GitHub OAuth — confirmed YES (Laravel Socialite)
 - [ ] Email provider for >3K/mo (Resend paid vs Postmark vs SES)
+- [ ] Final infra choice (AWS credits pending approval — fallback Hetzner)
+- [ ] Landing page repo visibility (public vs private)
 - [ ] ploy.cloud CF Pages memory fix — needs CF account access

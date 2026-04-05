@@ -1,6 +1,6 @@
 # Crontinel — Product Requirements Document
 
-**Version:** 1.0
+**Version:** 1.3
 **Date:** 2026-04-05
 **Status:** In progress — pre-coding reference
 **Owner:** Harun Ray
@@ -25,6 +25,10 @@
 12. [OSS Package Spec](#12-oss-package-spec)
 13. [Landing Page Spec](#13-landing-page-spec)
 14. [Build Milestones & Acceptance Criteria](#14-build-milestones--acceptance-criteria)
+15. [CI/CD & Infrastructure](#15-cicd--infrastructure)
+16. [GDPR & Privacy](#16-gdpr--privacy)
+17. [Analytics & Observability](#17-analytics--observability)
+18. [Auth & Security](#18-auth--security)
 
 ---
 
@@ -591,9 +595,9 @@ Paginated cron run history.
    - Publishes config/crontinel.php
    - Runs migrations (creates crontinel_runs table)
    - Prints dashboard URL
-3. Add CRON_SENTINEL_PATH=cron-sentinel to .env (optional)
-4. Visit /cron-sentinel
-5. To connect to SaaS: add CRON_SENTINEL_API_KEY=xxx to .env
+3. Add CRONTINEL_PATH=crontinel to .env (optional, to change dashboard URL)
+4. Visit /crontinel
+5. To connect to SaaS: add CRONTINEL_API_KEY=xxx to .env
 ```
 
 ### 8.3 Alert firing flow
@@ -847,8 +851,8 @@ UI shows upgrade prompts when limit reached — never hard errors without explan
 ### 12.1 Package identity
 
 - **Composer name:** `harunrrayhan/crontinel`
-- **Namespace:** `CronSentinel\`
-- **Laravel auto-discovery:** Yes (`CronSentinelServiceProvider`)
+- **Namespace:** `Crontinel\`
+- **Laravel auto-discovery:** Yes (`CrontinelServiceProvider`)
 - **Min requirements:** PHP 8.2+, Laravel 11+
 
 ### 12.2 Configuration (`config/crontinel.php`)
@@ -857,9 +861,9 @@ All values have sane defaults. Zero required config for local use.
 
 | Key | Default | Description |
 |---|---|---|
-| `path` | `cron-sentinel` | Dashboard URL path |
+| `path` | `crontinel` | Dashboard URL path |
 | `middleware` | `['web', 'auth']` | Dashboard middleware |
-| `saas_key` | `env('CRON_SENTINEL_API_KEY')` | API key for SaaS reporting |
+| `saas_key` | `env('CRONTINEL_API_KEY')` | API key for SaaS reporting |
 | `saas_url` | `https://app.crontinel.com` | SaaS endpoint (overridable for self-hosted SaaS) |
 | `horizon.enabled` | `true` | Toggle Horizon monitoring |
 | `horizon.supervisor_alert_after_seconds` | `60` | Alert threshold |
@@ -872,8 +876,8 @@ All values have sane defaults. Zero required config for local use.
 | `cron.late_alert_after_seconds` | `120` | Late detection threshold |
 | `cron.retain_days` | `30` | History retention |
 | `alerts.channel` | `null` | `slack`, `mail`, or `null` |
-| `alerts.slack.webhook_url` | `env('CRON_SENTINEL_SLACK_WEBHOOK')` | Slack webhook |
-| `alerts.mail.to` | `env('CRON_SENTINEL_ALERT_EMAIL')` | Alert email |
+| `alerts.slack.webhook_url` | `env('CRONTINEL_SLACK_WEBHOOK')` | Slack webhook |
+| `alerts.mail.to` | `env('CRONTINEL_ALERT_EMAIL')` | Alert email |
 
 ### 12.3 Artisan commands
 
@@ -888,20 +892,20 @@ All values have sane defaults. Zero required config for local use.
 To track cron runs, user adds one line to `routes/console.php` or `Kernel.php`:
 
 ```php
-use CronSentinel\Facades\CronSentinel;
+use Crontinel\Facades\Crontinel;
 
 // Wrap existing scheduled commands:
-CronSentinel::track($schedule);
+Crontinel::track($schedule);
 // OR add to individual commands:
 $schedule->command('inspire')->everyHour()->withoutOverlapping();
-// CronSentinel hooks into the scheduler automatically via event listeners
+// Crontinel hooks into the scheduler automatically via event listeners
 ```
 
 Package listens to Laravel's `ScheduledTaskFinished` and `ScheduledTaskFailed` events — no manual wrapping needed.
 
 ### 12.5 SaaS reporting (when api_key configured)
 
-If `CRON_SENTINEL_API_KEY` is set:
+If `CRONTINEL_API_KEY` is set:
 - Package sends `POST /ingest/ping` to SaaS every 60 seconds via a queued job
 - Package sends `POST /ingest/cron` after each scheduled task
 - Package sends `POST /ingest/event` on threshold crossings
@@ -1116,4 +1120,142 @@ Competitors to create: `cronitor`, `better-stack`, `oh-dear`, `forge-heartbeats`
 
 ---
 
-*End of PRD v1.2*
+---
+
+## 15. CI/CD & Infrastructure
+
+### 15.1 Repositories
+
+| Repo | Visibility | Contents |
+|---|---|---|
+| `HarunRRayhan/crontinel` | Public | OSS Laravel package |
+| `HarunRRayhan/crontinel-app` | Private | SaaS app (Laravel 12) |
+| `HarunRRayhan/crontinel-landing` | TBD | Astro landing page |
+
+### 15.2 Branch strategy
+
+- `main` → deploys to production (`app.crontinel.com`)
+- `staging` → deploys to staging (`staging.crontinel.com`)
+- Feature branches → PRs into `staging`
+- `staging` promoted to `main` after verification
+
+### 15.3 GitHub Actions pipelines
+
+**On PR to `staging`:**
+1. Install PHP deps + run `pest`
+2. Static analysis (if configured)
+3. Must pass before merge
+
+**On push to `staging`:**
+1. Run tests
+2. AWS CodeDeploy → staging server
+
+**On push to `main`:**
+1. Run tests
+2. AWS CodeDeploy → production server
+
+### 15.4 Staging environment
+
+- URL: `staging.crontinel.com`
+- Mirrors production stack exactly (same PHP version, same DB engine)
+- Has its own Stripe test-mode keys
+- Has its own database (never shares data with production)
+- Purpose: smoke-test before every production deploy
+
+---
+
+## 16. GDPR & Privacy
+
+### 16.1 Required at launch
+
+| Requirement | Implementation |
+|---|---|
+| Cookie consent banner | Shown on first visit to `crontinel.com` — opt-in for analytics |
+| Privacy Policy | `/legal/privacy` — plaintext, no legalese |
+| Terms of Service | `/legal/terms` |
+| Data export | User can download all their data as JSON from `/profile` |
+| Account deletion | Deletes user + all team data. Queued job purges PII within 30 days |
+| Right to be forgotten | Account deletion satisfies this; logged in deletion_requests table |
+
+### 16.2 Data residency
+
+Preferred: EU region (Hetzner EU or AWS `eu-central-1`). Noted in Privacy Policy.
+
+### 16.3 What we collect
+
+- Email, name, password hash — for auth
+- Team/app data — for the product
+- IP address — in server logs (standard, not stored in DB)
+- Analytics events — only on `crontinel.com` (not on `app.crontinel.com`)
+- No selling data. No ad tracking on the app.
+
+### 16.4 Cookie categories
+
+| Category | Cookies | Consent required |
+|---|---|---|
+| Strictly necessary | Session, CSRF | No |
+| Analytics | Google Analytics | Yes (opt-in) |
+| No marketing/ad cookies | — | — |
+
+---
+
+## 17. Analytics & Observability
+
+### 17.1 Landing page analytics
+
+- **Google Analytics 4** — installed on `crontinel.com` only
+- Loaded only after cookie consent given
+- Track: pageviews, signup CTA clicks, pricing page views, blog reads
+
+### 17.2 App observability (not user-facing analytics)
+
+- **Laravel Telescope** — dev/staging only, never production
+- **Laravel Horizon** — queue monitoring on production (dogfooding)
+- **Gatus** — uptime checks on `status.crontinel.com`
+  - Monitors: `app.crontinel.com`, `app.crontinel.com/api/v1/health`, `docs.crontinel.com`
+  - Alerts to founder's email when any endpoint is down
+- **Application logs** — to stdout + log file (Laravel default); ship to CloudWatch on AWS
+
+### 17.3 Business metrics
+
+Tracked manually or via Stripe dashboard:
+- MRR, churn, trial → paid conversion rate
+- Packagist download count (tracked weekly)
+- New signups per week
+
+---
+
+## 18. Auth & Security
+
+### 18.1 Authentication
+
+- **Email/password** via Laravel Breeze
+- **GitHub OAuth** via Laravel Socialite (confirmed at launch)
+- Email verification required before accessing dashboard
+
+### 18.2 Two-factor authentication (2FA)
+
+- **Type:** TOTP (authenticator app — Google Authenticator, 1Password, etc.)
+- **Required:** No — optional and recommended
+- **UI:** Enable/disable from `/profile/security`
+- **Flow:** If 2FA enabled, shown after password login as a second step
+- **Recovery codes:** Generated on setup, downloadable once
+- **Implementation:** `pragmarx/google2fa-laravel` or Laravel built-in (Laravel 11+)
+
+### 18.3 API security
+
+- Package → SaaS: `api_key` in `Authorization: Bearer` header. Keys are 64-char random strings, hashed in DB.
+- REST API: Laravel Sanctum personal access tokens (Pro/Team only)
+- Rate limiting: 120 req/min per `api_key` on ingest endpoints
+
+### 18.4 General security
+
+- HTTPS everywhere (ACM cert on AWS ALB, or Let's Encrypt on Hetzner)
+- CSRF protection on all forms (Laravel default)
+- XSS: Blade auto-escapes by default; never use `{!! !!}` with user input
+- SQL injection: Eloquent ORM + query builder only; no raw user-supplied SQL
+- Secrets: all in `.env`, never committed. Production secrets via AWS Secrets Manager or server `.env`
+
+---
+
+*End of PRD v1.3*

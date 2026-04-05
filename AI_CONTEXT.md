@@ -14,10 +14,11 @@
 - The moat: generic monitors check if a job pinged back. Crontinel reads Horizon internals.
 
 **Repos:**
-- This repo: `~/Work/crontinel` → `github.com/HarunRRayhan/crontinel`
-- Symlinked at: `~/.openclaw/workspace/projects/crontinel`
+- OSS package: `~/Work/crontinel` → `github.com/HarunRRayhan/crontinel` (public)
+- SaaS app: `~/Work/crontinel-app` → `github.com/HarunRRayhan/crontinel-app` (private)
+- OSS symlinked at: `~/.openclaw/workspace/projects/crontinel`
 
-**Full specs:** See `PRD.md` (product requirements) and `ARCHITECTURE.md` (all decisions).
+**Full specs:** See `PRD.md` (product requirements, v1.3) and `ARCHITECTURE.md` (all decisions).
 
 ---
 
@@ -33,6 +34,10 @@
 | Auth | Laravel Breeze + GitHub OAuth (Socialite) |
 | Email | Resend (start) → AWS SES (when production access approved) |
 | Infra | AWS EC2 + RDS PostgreSQL (if credits) or Hetzner + Neon (fallback) |
+| CI/CD | GitHub Actions + AWS CodeDeploy |
+| Staging | staging.crontinel.com (mirrors production) |
+| Analytics | Google Analytics 4 (landing page only) |
+| 2FA | Optional TOTP (pragmarx/google2fa-laravel or Laravel built-in) |
 | Status page | Gatus (Docker on VPS) |
 
 ---
