@@ -7,8 +7,8 @@
 ## Scope of this repo
 
 `harunrrayhan/crontinel` — MIT Laravel package. Ships to Packagist.
-SaaS app is a separate private repo (`crontinel-app`, `~/Work/crontinel-app`).
-Landing page is `crontinel-landing` (`~/Work/crontinel-landing`).
+SaaS app is at `~/Work/crontinel/app` (private repo, TBD).
+Landing page is at `~/Work/crontinel/landing`.
 
 ## Quick reference
 
@@ -19,3 +19,13 @@ Landing page is `crontinel-landing` (`~/Work/crontinel-landing`).
 - Current milestone: **Milestone 1 — OSS Package MVP** (see `PRD.md` section 14)
 - All architectural decisions: see `ARCHITECTURE.md`
 - All dev conventions: see `AI_CONTEXT.md`
+
+## Response Footer (Telegram / OpenClaw)
+
+Every message sent to the user in Telegram must end with:
+
+```
+⏰ ct || 🤖 {model}
+```
+
+One blank line before the footer. No exceptions — short replies, confirmations, everything.
