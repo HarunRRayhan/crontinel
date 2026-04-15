@@ -50,16 +50,40 @@
 | GET | `/status/{slug}` | public | `view` (HTML) |
 | GET | `/api/status-pages/{slug}` | public | `show` (JSON) |
 
+## Still Needed (Gaps)
+
+| File | Purpose |
+|------|---------|
+| `middleware/BlockSsrfUrls.php` | SSRF protection — block internal IPs in endpoint URLs (starter here) |
+| `tests/StatusPageTest.php` | Feature tests for CRUD + public page (starter here) |
+| `tests/CheckStatusPagesTest.php` | Command tests with mocked HTTP (starter here) |
+| `CheckStatusPages.php` | HEAD→GET fallback when server returns 405 on HEAD requests |
+| `status/show.blade.php` | Replace CDN Tailwind with bundled CSS |
+
+Copy starters from this directory into `app/` before deploying.
+
 ## To Deploy
 
 ```bash
-# 1. Run migrations
+# 1. Copy middleware
+cp app-status-pages/middleware/BlockSsrfUrls.php app/app/Http/Middleware/
+# Register in app/bootstrap/app.php or RouteServiceProvider for endpoint store routes
+
+# 2. Copy tests
+cp app-status-pages/tests/StatusPageTest.php app/tests/Feature/
+cp app-status-pages/tests/CheckStatusPagesTest.php app/tests/Feature/
+# Add factories for StatusPage and StatusPageEndpoint first
+
+# 3. Run migrations
 cd ~/Work/crontinel/app
 php artisan migrate
 
-# 2. Test the command
+# 4. Test the command
 php artisan status-pages:check
 
-# 3. Commit and push
-git add -A && git commit -m "feat: status pages feature stub" && git push
+# 5. Run tests
+php artisan test --filter=StatusPage
+
+# 6. Commit and push
+git add -A && git commit -m "feat: status pages — SSRF middleware + tests" && git push
 ```
