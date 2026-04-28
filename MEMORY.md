@@ -12,11 +12,23 @@
 - **Coding/implementation:** Use faster model
 
 ## 🤖 ctcc for Coding & Content
-**For ALL coding, PR reviews, and content writing → send a dedicated Telegram message mentioning @CrontinelOnM4AirCCBot in topic 6.**
-ctcc listens automatically and responds. Do NOT do these tasks directly.
+**For ALL coding, PR reviews, and content writing → send a dedicated Telegram message in topic 6.**
+
+**Exact format:**
+```
+@CrontinelOnM4AirCCBot
+
+[Task prompt here]
+```
+
+- `@CrontinelOnM4AirCCBot` on its own line
+- Task prompt below it
+- ctcc responds automatically in topic 6
+- Do NOT do coding/content tasks directly — always delegate to ctcc
 
 ## Bot-to-Bot Routing
 - When `@CrontinelOnM4AirCCBot` mentions arrive from `@HarunsOpenClawMBA_bot`, lead response with `@HarunsOpenClawMBA_bot`
+- ctcc responses appear as inbound messages in topic 6 — visible to me, relay to Harun if needed
 
 ## 🚫 ACP Sessions DISABLED
 - No ACP sessions, no acpx, no ACP subagent spawning
