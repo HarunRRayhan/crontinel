@@ -57,6 +57,11 @@
 - INBOX: `rayclaw@agentmail.to`
 - All `info@crontinel.com` mail forwards here
 
+### PostHog (ERROR TRACKING)
+- Project created for Crontinel
+- Token: `[REDACTED]`
+- Install on: landing (Astro) + app (Laravel)
+
 ### npm Packages
 - `@crontinel/node` — github.com/crontinel/node
 - `@crontinel/mcp-server` — github.com/crontinel/mcp-server
