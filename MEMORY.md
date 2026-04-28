@@ -12,8 +12,8 @@
 - **Coding/implementation:** Use faster model
 
 ## 🤖 ctcc for Coding & Content
-**ALL coding, PR reviews, and content writing → mention @CrontinelOnM4AirCCBot in Telegram topic 6.**
-Do NOT do these tasks directly — always delegate to ctcc.
+**For ALL coding, PR reviews, and content writing → send a dedicated Telegram message mentioning @CrontinelOnM4AirCCBot in topic 6.**
+ctcc listens automatically and responds. Do NOT do these tasks directly.
 
 ## Bot-to-Bot Routing
 - When `@CrontinelOnM4AirCCBot` mentions arrive from `@HarunsOpenClawMBA_bot`, lead response with `@HarunsOpenClawMBA_bot`
