@@ -96,3 +96,12 @@ All secrets in `~/.openclaw/secrets/ct.env` — NEVER in workspace files.
 
 <!-- openclaw-memory-promotion:memory:memory/2026-04-22.md:404:406 -->
 - - Candidate: Possible Lasting Truths: ## Session Summary — 2026-04-13 Evening ### npm Published - `@crontinel/node@0.1.0` — github.com/crontinel/node - `@crontinel/mcp-server@0.2.0` — github.com/crontinel/mcp-server - Token used: `[REDACTED]` (from Harun) ### Per - confidence: 0.00 - evidence: memory/2026-04-18.md:369-371 [score=0.843 recalls=0 avg=0.620 source=memory/2026-04-22.md:318-320]
+
+## Promoted From Short-Term Memory (2026-04-29)
+
+<!-- openclaw-memory-promotion:memory:memory/2026-04-22.md:414:416 -->
+- - Candidate: Landing Favicon — Root Cause Found & Fixed: **Root cause**: The old indigo-gradient clock logo was **hardcoded as inline SVG** in `src/pages/index.astro` — both in the nav `<a class="brand">` and footer `<a class="brand">`. It was NOT served from a file. This is why updating `/fa - confidence: 0.00 - evidence: memory/2026-04-22.md:394-396 [score=0.875 recalls=0 avg=0.620 source=memory/2026-04-22.md:13-15]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-22.md:419:422 -->
+- - Candidate: Logo Versions: v18: 20729 bytes — old indigo gradient (no longer used); v19: 23385 bytes — new dark slate clock with green checkmark badge (same as v20); v20: 23385 bytes — identical to v19; just a different version label; Twitter handle corrected to `@HarunRRayhan`; App (Railway - confidence: 0.00 - evidence: memory/2026-04-22.md:399-402 - recalls: 0 [score=0.875 recalls=0 avg=0.620 source=memory/2026-04-22.md:18-21]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-22.md:423:423 -->
+- - Candidate: Logo Versions: Landing (Cloudflare Pages): rebuilding [score=0.875 recalls=0 avg=0.620 source=memory/2026-04-22.md:23-23]

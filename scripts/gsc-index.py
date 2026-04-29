@@ -11,9 +11,9 @@ import xml.etree.ElementTree as ET
 import json
 import time
 
-SITE_URL = "https://crontinel.com"
+SITE_URL = "sc-domain:crontinel.com"
 CREDS_FILE = "/Users/ray/Work/crontinel/.secrets/gsc-service-account.json"
-SITEMAP_URL = f"{SITE_URL}/sitemap.xml"
+SITEMAP_URL = "https://crontinel.com/sitemap.xml"
 
 print("=== GSC Indexing Push for Crontinel ===\n")
 
