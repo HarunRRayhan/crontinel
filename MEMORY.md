@@ -61,6 +61,20 @@
 - Project created for Crontinel
 - Token: `[REDACTED — NEVER COMMIT]`, store only in Railway env vars
 - Install on: landing (Astro) + app (Laravel)
+- Landing: `PUBLIC_POSTHOG_ENABLED` toggle in `wrangler.json` — flip to `true` to go live
+- App: `POSTHOG_API_KEY`, `POSTHOG_HOST`, `POSTHOG_ERROR_TRACKING_ENABLED` vars needed in Railway (Harun to set)
+- PostHogErrorTracker guarded with `class_exists` check (fails gracefully if package missing)
+
+### Stripe Staging Mode
+- `STRIPE_STAGING_MODE=true` active on Railway
+- Non-admin users → 503 maintenance page
+- Admin/super_admin → full app + yellow warning banner ("⚠️ Stripe staging mode active")
+- Middleware: `app/Http/Middleware/EnsureStripeStagingMode.php`
+- Maintenance view: `resources/views/errors/staging.blade.php`
+- Banner component: `resources/views/components/staging-banner.blade.php`
+- `STRIPE_STAGING_SECRET_KEY` set in Railway for Cashier override
+- Bug fixed: Team model now uses `$casts` for datetime (was using deprecated `$dates`)
+- Bug fixed: trial-banner blade guards against string `trial_ends_at`
 
 ### npm Packages
 - `@crontinel/node` — github.com/crontinel/node
@@ -85,10 +99,11 @@ All secrets in `~/.openclaw/secrets/ct.env` — NEVER in workspace files.
 - Onboarding loop bug fixed ✅ (PR #43 merged)
 
 ### Remaining Tasks
-- [IN PROGRESS] PostHog full setup: flip `PUBLIC_POSTHOG_ENABLED=true` in wrangler.json when ready; set Railway env vars manually (Harun)
+- [IN PROGRESS] PostHog: set `POSTHOG_API_KEY`, `POSTHOG_HOST`, `POSTHOG_ERROR_TRACKING_ENABLED` in Railway env vars (Harun has the key)
 - Reddit/HN: posts written, Harun to review and post
 - Product Hunt launch prep: doc at `landing/PRODUCTHUNT.md`
-- [IN PROGRESS] `reference/configuration.md` full config example (ctcc writing)
+- ~~Stripe staging mode~~ ✅ Deployed and verified (PR #60 merged)
+- ~~GSC sitemap~~ ✅ Fix merged, re-indexing pending
 - ~~LTD/Pro pricing note~~ ✅ Already on pricing.astro — "Lifetime deal" callout box + FAQ entry
 - ~~Laravel directories~~ (ON HOLD — Harun paused for 1+ month, 2026-05-01)
 
