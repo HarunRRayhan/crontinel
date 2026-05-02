@@ -86,8 +86,10 @@
 
 ### Packagist
 - Org packages: `crontinel/php`, `crontinel/laravel`
-- Personal token in `~/.openclaw/secrets/packagist.env`
-- Webhook setup needs manual re-setup
+- Username: `HarunRay` (case-sensitive!)
+- Token in `~/.openclaw/secrets/packagist.env`
+- Webhook active on both repos — GitHub → Packagist sync working ✅
+- Manual trigger: `curl -X POST https://packagist.org/api/github -H "Authorization: Bearer HarunRay:TOKEN" -d 'payload={"repository":{"url":"https://github.com/crontinel/php"}}'`
 
 ## Secrets
 All secrets in `~/.openclaw/secrets/ct.env` — NEVER in workspace files.
@@ -102,8 +104,8 @@ All secrets in `~/.openclaw/secrets/ct.env` — NEVER in workspace files.
 - Onboarding loop bug fixed ✅ (PR #43 merged)
 
 ### Remaining Tasks
-- Reddit/HN: posts written, Harun to review and post
-- Product Hunt launch prep: doc at `landing/PRODUCTHUNT.md`
+- Reddit/HN: posts written, Harun to review and post (SNOOZED until 2026-05-05)
+- Product Hunt launch prep: doc at `landing/PRODUCTHUNT.md` (SNOOZED until 2026-05-05)
 - ~~Stripe staging mode~~ ✅ Deployed and verified (PR #60 merged)
 - ~~GSC sitemap~~ ✅ Fix merged, re-indexing pending
 - ~~LTD/Pro pricing note~~ ✅ Already on pricing.astro — "Lifetime deal" callout box + FAQ entry
@@ -146,3 +148,8 @@ All secrets in `~/.openclaw/secrets/ct.env` — NEVER in workspace files.
 
 <!-- openclaw-memory-promotion:memory:memory/2026-04-24.md:329:330 -->
 - **App uses `PRICE_ID_FREE`, `PRICE_ID_PRO_MONTHLY`, etc. — NOT `STRIPE_PRICE_*`** (BillingController.php confirms: `config('billing.price_id_free')` etc.) [score=0.881 recalls=0 avg=0.620 source=memory/2026-04-24.md:329-330]
+
+## Promoted From Short-Term Memory (2026-05-02)
+
+<!-- openclaw-memory-promotion:memory:memory/2026-04-13.md:349:374 -->
+- ### Non-Blocking Items Remaining - Laravel Magazine directory: needs account login to submit - `get.crontinel.com` DNS: doesn't exist, CLI install URL workaround applied - GSC: needs live site - PyPI: blocked on PyPI account creation - crates.io: GitHub OAuth only — no email/password possible - Packagist webhook: needs Packagist API token - docs/marketing/keyword-research.md — full keyword research (tools + keyword maps for WooCommerce accessibility, bulk edit, Shopify accessibility) - 9 free tools documented: Ubersuggest, Keyword Surfer, Keywords Everywhere, AnswerThePublic, Answer Socrates, Google Keyword Planner, GSC, AlsoAsked, ChatGPT - 80+ keywords mapped by intent: primary, purchase, long-tail, problem/pain, comparison - Content mapping: which keywords to target on which pages ## Session Summary — 2026-04-17 (Toolblip work) ### Laravel Test Fix (partial) - Added `bootstrap/providers.php` (Laravel 11 requires this explicitly) - Root cause: `files` binding missing in Laravel 11 + `configureRateLimiting()` called too early in `register()` instead of `boot()` - Fix pushed to `main`: `81b2df8` - Tests still failing (cache.store not bound) — deferred to tomorrow ### Frontend — Blog Listing Redesign - Card grid layout with gradient images per category (was list view) - Added `FeaturedImage` client component (with onError fallback to gradient) - Added `featuredImage` field to all 25 blog posts (gradient URLs via `api.radtx.com/gradient/{colors}`) - Added `generateStaticParams` to blog/[slug] → all 30 blog posts now pre-rendered [score=0.925 recalls=6 avg=0.499 source=memory/2026-04-13.md:349-374]
